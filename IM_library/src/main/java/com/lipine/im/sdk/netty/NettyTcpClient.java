@@ -1,12 +1,16 @@
 package com.lipine.im.sdk.netty;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.lipine.im.sdk.LPStatusDefine;
 import com.lipine.im.sdk.listener.ConnectServerStatusListener;
+import com.lipine.im.sdk.protobuf.MessageProtobuf;
 
 import java.util.Vector;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -19,7 +23,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  * Description: 用于初始化netty的tcp连接
  * */
 public class NettyTcpClient {
-
+    private static final String TAG = "NettyTcpClient";
     private static volatile NettyTcpClient instance;
 
     private NettyTcpClient (){}
@@ -41,7 +45,6 @@ public class NettyTcpClient {
     private ConnectServerStatusListener mConnectServerStatusListener;
 
     private ExecutorServiceFactory loopGroup;
-
 
     /**
      * 初始化
@@ -82,26 +85,34 @@ public class NettyTcpClient {
     /**
      * 连接服务器
      */
-    private void connectServer(String currentHost,int currentPort){
+    private void connectServer(final String currentHost, final int currentPort){
             try {
-                channel = bootstrap.connect(currentHost, currentPort).sync().channel();
-                if(channel.isActive()&& channel.isOpen()){
-                    mConnectServerStatusListener.onConnectionStatus(LPStatusDefine.LPConnectionStatus.LPCONNECTIONSTATUS_CONNECT_SUCCEED);
-                    System.err.println(String.format("连接Server(ip[%s], port[%s])成功", currentHost, currentPort));
-                }else{
-                    mConnectServerStatusListener.onConnectionStatus(LPStatusDefine.LPConnectionStatus.LPCONNECTIONSTATUS_CONNECT_ERROR);
-                }
+                channel = bootstrap.connect(currentHost, currentPort).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        if(channelFuture.isSuccess()){
+                            mConnectServerStatusListener.onConnectionStatus(LPStatusDefine.LPConnectionStatus.LPCONNECTIONSTATUS_CONNECT_SUCCEED);
+                            System.err.println(String.format("连接Server(ip[%s], port[%s])成功", currentHost, currentPort));
+                            LogUtils.eTag(TAG,String.format("连接Server(ip[%s], port[%s])成功", currentHost, currentPort));
+                        }else{
+                            mConnectServerStatusListener.onConnectionStatus(LPStatusDefine.LPConnectionStatus.LPCONNECTIONSTATUS_CONNECT_ERROR);
+                        }
+                    }
+                }).sync().channel();
             } catch (Exception e) {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
+                LogUtils.eTag(TAG,String.format("连接Server(ip[%s], port[%s])失败", currentHost, currentPort));
                 System.err.println(String.format("连接Server(ip[%s], port[%s])失败", currentHost, currentPort));
                 channel = null;
                 mConnectServerStatusListener.onConnectionStatus(LPStatusDefine.LPConnectionStatus.LPCONNECTIONSTATUS_CONNECT_ERROR);
             }
     }
+
+
 
     /**
      * 关闭连接，同时释放资源

@@ -30,10 +30,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
-
+    // https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
+    implementation 'com.blankj:utilcode:1.26.0'
     // https://mvnrepository.com/artifact/io.netty/netty-all
     implementation files('libs/netty-all-4.1.46.Final.jar')
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
     implementation files('libs/protobuf-java-3.11.1.jar')
+
+
 }

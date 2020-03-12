@@ -1,7 +1,9 @@
 package com.lipine.im.sdk;
 
+import android.content.Context;
 import android.text.TextUtils;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.lipine.im.sdk.listener.ConnectServerStatusListener;
 import com.lipine.im.sdk.listener.OnLoginCallback;
 import com.lipine.im.sdk.netty.NettyTcpClient;
@@ -16,9 +18,9 @@ public class LPIMClient {
 
     private LPIMClient (){}
 
-    private volatile LPIMClient client = null;
+    private static volatile LPIMClient client = null;
 
-    public LPIMClient initialize(){
+    public static LPIMClient initialize(){
         if(client == null){
             synchronized (LPIMClient.class) {
                 if (client == null) {
@@ -27,6 +29,14 @@ public class LPIMClient {
             }
         }
         return client;
+    }
+
+    public static void init(Context context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Context异常");
+        } else {
+            LogUtils.getConfig().setLogSwitch(true).setConsoleSwitch(true);
+        }
     }
 
     /**
