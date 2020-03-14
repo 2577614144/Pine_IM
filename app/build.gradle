@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -25,5 +26,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    // https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
+    implementation 'com.blankj:utilcode:1.26.0'
     implementation project(':IM_library')
+    implementation 'com.android.support:multidex:1.0.3'
+
 }

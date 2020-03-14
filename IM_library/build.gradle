@@ -33,12 +33,10 @@ dependencies {
     // https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
     implementation 'com.blankj:utilcode:1.26.0'
     // https://mvnrepository.com/artifact/io.netty/netty-all
-    implementation files('libs/netty-all-4.1.46.Final.jar')
+    implementation 'io.netty:netty-all:4.1.45.Final'
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
-    implementation files('libs/protobuf-java-3.11.1.jar')
+    implementation 'com.google.protobuf:protobuf-java:3.11.1'
     // https://mvnrepository.com/artifact/com.alibaba/fastjson
-    implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.62'
-
-
+    implementation 'com.alibaba:fastjson:1.2.62'
 
 }
