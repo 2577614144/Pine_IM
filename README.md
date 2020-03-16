@@ -1,7 +1,7 @@
 # Pine_IM
-基于Netty ProtoBuffer实现的Android即时通讯
+基于Netty Protobuf实现的Android即时通讯
 
-## Android Netty+Protobuffer实现即时通讯SDK
+## Android Netty+Protobuf实现即时通讯SDK
 
 ### 开发背景
 
@@ -15,6 +15,6 @@
 
 代码地址：[项目地址](https://github.com/2577614144/Pine_IM)
 
-### Netty在Android上的简单使用
+
 
 
