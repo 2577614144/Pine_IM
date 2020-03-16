@@ -1,6 +1,7 @@
 package com.lipine.im.sdk;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import com.blankj.utilcode.util.CrashUtils;
@@ -8,6 +9,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.lipine.im.sdk.bean.MessageType;
 import com.lipine.im.sdk.listener.ConnectServerStatusListener;
 import com.lipine.im.sdk.listener.OnLoginCallback;
+import com.lipine.im.sdk.netty.IMMessageService;
 import com.lipine.im.sdk.netty.NettyTcpClient;
 import com.lipine.im.sdk.processor.MessageProcessor;
 import com.lipine.im.sdk.protobuf.MessageProtobuf;
@@ -45,10 +47,13 @@ public class LPIMClient {
 
     public Channel channel;
 
+    public Context mContext;
+
     public void init(Context context) {
         if (context == null) {
             throw new IllegalArgumentException("Context异常");
         } else {
+            this.mContext = context;
             LogUtils.getConfig().setLogSwitch(true).setConsoleSwitch(true);
             CrashUtils.init(new CrashUtils.OnCrashListener() {
                 @Override
@@ -56,6 +61,9 @@ public class LPIMClient {
                     LogUtils.eTag(TAG,"崩溃的异常信息为："+crashInfo);
                 }
             });
+
+            //启动守护服务
+            mContext.startService(new Intent(mContext, IMMessageService.class));
         }
     }
 
@@ -98,6 +106,7 @@ public class LPIMClient {
                 //如果连接服务器成功
                 if(lpConnectionStatus == LPStatusDefine.LPConnectionStatus.LPCONNECTIONSTATUS_CONNECT_SUCCEED){
                     try {
+                        IMMessageService.setOnLoginCallback(onLoginCallback);
                         login(LPIMConfig.SERVER_IP, LPIMConfig.SERVER_PORT,userName,passWord);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();

@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.LogUtils;
 import com.lipine.im.sdk.bean.MessageType;
+import com.lipine.im.sdk.event.CEventCenter;
+import com.lipine.im.sdk.event.Events;
 import com.lipine.im.sdk.netty.NettyTcpClient;
 import com.lipine.im.sdk.processor.MessageProcessor;
 import com.lipine.im.sdk.protobuf.MessageProtobuf;
@@ -52,6 +54,8 @@ public class LoginAuthRespHandler extends ChannelInboundHandlerAdapter {
                 if (status == 1) {
                     LogUtils.eTag(TAG,"===================需要发送心跳消息了==============");
 
+
+                    CEventCenter.dispatchEvent(Events.CHAT_LOGIN_MESSAGE, 0, 0, handshakeRespMsg);
 //                    // 握手成功，马上先发送一条心跳消息，至于心跳机制管理，交由HeartbeatHandler
 //                    MessageProtobuf.Msg heartbeatMsg = imsClient.getHeartbeatMsg();
 //                    if (heartbeatMsg == null) {

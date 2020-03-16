@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onSuccess() {
-                        ToastUtils.showShort("连接服务器成功");
+                        ToastUtils.showShort("用户名密码正确，跳转首页");
                     }
 
                     @Override
