@@ -37,7 +37,6 @@ public class LoginAuthRespHandler extends ChannelInboundHandlerAdapter {
             return;
         }
           if (MessageType.HANDSHAKE.getMsgType() == handshakeRespMsg.getHead().getMsgType()) {
-            LogUtils.eTag(TAG,"收到服务端握手响应消息，message=" + handshakeRespMsg);
             int status = -1;
             try {
                 JSONObject jsonObj = JSON.parseObject(handshakeRespMsg.getHead().getExtend());
@@ -46,7 +45,7 @@ public class LoginAuthRespHandler extends ChannelInboundHandlerAdapter {
                 e.printStackTrace();
             } finally {
                 if (status == 1) {
-                    LogUtils.eTag(TAG,"===================需要发送心跳消息了==============");
+//                    LogUtils.eTag(TAG,"===================需要发送心跳消息了==============");
                     CEventCenter.dispatchEvent(Events.CHAT_LOGIN_MESSAGE, 0, 0, handshakeRespMsg);
 //                    // 握手成功，马上先发送一条心跳消息，至于心跳机制管理，交由HeartbeatHandler
 //                    MessageProtobuf.Msg heartbeatMsg = imsClient.getHeartbeatMsg();

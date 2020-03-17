@@ -40,7 +40,7 @@ public class HeartbeatRespHandler extends ChannelInboundHandlerAdapter {
 
         int heartbeatMsgType = heartbeatMsg.getHead().getMsgType();
         if (heartbeatMsgType == heartbeatRespMsg.getHead().getMsgType()) {
-            LogUtils.eTag(TAG,"收到服务端心跳响应消息，message=" + heartbeatRespMsg);
+//            LogUtils.eTag(TAG,"收到服务端心跳响应消息，message=" + heartbeatRespMsg);
             CEventCenter.dispatchEvent(Events.CHAT_HEARTBEAT_RECEIVED_MESSAGE, 0, 0, heartbeatRespMsg);
         } else {
             // 消息透传

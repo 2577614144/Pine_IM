@@ -188,7 +188,7 @@ public class CEventCenter {
             LinkedList<I_CEventListener> listenerList = null;
 
             synchronized (mListenerLock) {
-                LogUtils.eTag(SYMBOLIC_NAME, "dispatchEvent | topic = " + topic + " msgCode = " + event.msgCode);
+//                LogUtils.eTag(SYMBOLIC_NAME, "dispatchEvent | topic = " + topic + " msgCode = " + event.msgCode);
                 Object obj = mListenerMap.get(topic);
                 if(null != obj) {
                     if(obj instanceof I_CEventListener) {

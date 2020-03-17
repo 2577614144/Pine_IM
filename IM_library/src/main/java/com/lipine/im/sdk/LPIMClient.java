@@ -136,7 +136,7 @@ public class LPIMClient {
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
                         // 发送成功，等待服务器响应
-                        LogUtils.eTag(TAG, String.format("发送消息(ip[%s], port[%s])成功",LPIMConfig.SERVER_IP, LPIMConfig.SERVER_PORT));
+//                        LogUtils.eTag(TAG, String.format("发送消息(ip[%s], port[%s])成功",LPIMConfig.SERVER_IP, LPIMConfig.SERVER_PORT));
                     } else {
                         // 发送失败
                         LogUtils.eTag(TAG, String.format("发送消息(ip[%s], port[%s])失败", LPIMConfig.SERVER_IP, LPIMConfig.SERVER_PORT));

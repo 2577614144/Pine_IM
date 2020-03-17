@@ -57,7 +57,7 @@ public class IMMessageService  extends Service  implements I_CEventListener {
     public void onCEvent(String topic, int msgCode, int resultCode, Object obj) {
         switch (topic) {
             case Events.CHAT_LOGIN_MESSAGE: {
-                LogUtils.eTag(TAG,"收到了传递过来的消息"+obj);
+                LogUtils.eTag(TAG,"======登录的响应消息========"+obj);
                 handlerLoginResult(obj);
                 break;
             }
@@ -75,7 +75,7 @@ public class IMMessageService  extends Service  implements I_CEventListener {
              *  客户端接收心跳
              */
             case Events.CHAT_HEARTBEAT_RECEIVED_MESSAGE:{
-                LogUtils.eTag(TAG,"===========客户端接收到服务器响应心跳了=====");
+                LogUtils.eTag(TAG,"===========接收到服务器响应心跳了====="+obj);
                 break;
             }
             default:
@@ -133,7 +133,7 @@ public class IMMessageService  extends Service  implements I_CEventListener {
                 if (heartbeatMsg == null) {
                     return;
                 }
-                LogUtils.eTag(TAG,"客户端发送心跳消息，message=" + heartbeatMsg + "当前心跳间隔为：" + NettyTcpClient.getInstance().getHeartbeatInterval() + "ms\n");
+                LogUtils.eTag(TAG,"======客户端发送心跳消息=========" + heartbeatMsg + "当前心跳间隔为：" + NettyTcpClient.getInstance().getHeartbeatInterval() + "ms\n");
                 NettyTcpClient.getInstance().sendMsg(heartbeatMsg, false);
             }
         }
