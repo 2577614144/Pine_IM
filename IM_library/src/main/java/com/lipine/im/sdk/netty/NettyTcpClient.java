@@ -3,11 +3,18 @@ package com.lipine.im.sdk.netty;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.lipine.im.sdk.LPIMClient;
+import com.lipine.im.sdk.LPIMConfig;
 import com.lipine.im.sdk.LPStatusDefine;
+import com.lipine.im.sdk.bean.MessageType;
 import com.lipine.im.sdk.listener.ConnectServerStatusListener;
+import com.lipine.im.sdk.netty.handler.HeartbeatHandler;
+import com.lipine.im.sdk.netty.handler.TCPMessageHandler;
+import com.lipine.im.sdk.processor.MessageProcessor;
 import com.lipine.im.sdk.protobuf.MessageProtobuf;
 
+import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -17,6 +24,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.internal.StringUtil;
 
 /**
  * Time:2020/3/11
@@ -43,6 +52,8 @@ public class NettyTcpClient {
     private Bootstrap bootstrap;
     private Channel channel;
     private boolean isClosed = false;// 标识ims是否已关闭
+    // 心跳间隔时间
+    private int heartbeatInterval = IMSConfig.DEFAULT_HEARTBEAT_INTERVAL_FOREGROUND;
 
     private ConnectServerStatusListener mConnectServerStatusListener;
 
@@ -122,7 +133,14 @@ public class NettyTcpClient {
         }
     }
 
-
+    /**
+     * 获取线程池
+     *
+     * @return
+     */
+    public ExecutorServiceFactory getLoopGroup() {
+        return loopGroup;
+    }
 
     /**
      * 关闭连接，同时释放资源
@@ -173,9 +191,109 @@ public class NettyTcpClient {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("关闭channel出错，reason:" + e.getMessage());
+            LogUtils.eTag(TAG,"关闭channel出错，reason:" + e.getMessage());
         } finally {
             channel = null;
         }
     }
+
+    /**
+     * 添加心跳消息管理handler
+     */
+    public void addHeartbeatHandler() {
+        if (channel == null || !channel.isActive() || channel.pipeline() == null) {
+            return;
+        }
+
+        try {
+            // 之前存在的读写超时handler，先移除掉，再重新添加
+            if (channel.pipeline().get(IdleStateHandler.class.getSimpleName()) != null) {
+                channel.pipeline().remove(IdleStateHandler.class.getSimpleName());
+            }
+            // 3次心跳没响应，代表连接已断开
+            channel.pipeline().addFirst(IdleStateHandler.class.getSimpleName(), new IdleStateHandler(
+                    heartbeatInterval * 3, heartbeatInterval, 0, TimeUnit.MILLISECONDS));
+            // 重新添加HeartbeatHandler
+            if (channel.pipeline().get(HeartbeatHandler.class.getSimpleName()) != null) {
+                channel.pipeline().remove(HeartbeatHandler.class.getSimpleName());
+            }
+            if (channel.pipeline().get(TCPMessageHandler.class.getSimpleName()) != null) {
+                channel.pipeline().addBefore(TCPMessageHandler.class.getSimpleName(), HeartbeatHandler.class.getSimpleName(),
+                        new HeartbeatHandler(this));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtils.eTag(TAG,"添加心跳消息管理handler失败，reason：" + e.getMessage());
+        }
+    }
+
+
+    /**
+     * 构建心跳消息
+     *
+     * @return
+     */
+    //TODO userId 暂时写成默认
+    private String  userId = "111";
+    public MessageProtobuf.Msg getHeartbeatMsg() {
+        MessageProtobuf.Msg.Builder builder = MessageProtobuf.Msg.newBuilder();
+        MessageProtobuf.Head.Builder headBuilder = MessageProtobuf.Head.newBuilder();
+        headBuilder.setMsgId(UUID.randomUUID().toString());
+        headBuilder.setMsgType(MessageType.HEARTBEAT.getMsgType());
+        headBuilder.setFromId(userId);
+        headBuilder.setTimestamp(System.currentTimeMillis());
+        builder.setHead(headBuilder.build());
+        return builder.build();
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param msg
+     */
+    public void sendMsg(MessageProtobuf.Msg msg) {
+        this.sendMsg(msg, true);
+    }
+
+    /**
+     * 发送消息
+     * 重载
+     * @param msg
+     * @param isJoinTimeoutManager 是否加入发送超时管理器
+     */
+    public void sendMsg(MessageProtobuf.Msg msg, boolean isJoinTimeoutManager) {
+        if (msg == null || msg.getHead() == null) {
+            LogUtils.eTag(TAG,"发送消息失败，消息为空\tmessage=" + msg);
+            return;
+        }
+
+//        if(!StringUtil.isNullOrEmpty(msg.getHead().getMsgId())) {
+//            if(isJoinTimeoutManager) {
+//                msgTimeoutTimerManager.add(msg);
+//            }
+//        }
+
+        if (channel == null) {
+            LogUtils.eTag(TAG,"发送消息失败，channel为空\tmessage=" + msg);
+            return;
+        }
+
+        try {
+            if(channel.isActive() && channel.isOpen()){
+                channel.writeAndFlush(msg);
+            }
+        } catch (Exception ex) {
+            LogUtils.eTag(TAG,"发送消息失败，reason:" + ex.getMessage() + "\tmessage=" + msg);
+        }
+    }
+
+    /**
+     * 获取心跳间隔时间
+     *
+     * @return
+     */
+    public int getHeartbeatInterval() {
+        return this.heartbeatInterval;
+    }
+
 }

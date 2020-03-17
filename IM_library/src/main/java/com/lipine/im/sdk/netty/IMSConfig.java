@@ -26,7 +26,7 @@ public class IMSConfig {
     // 默认消息重发间隔时长
     public static final int DEFAULT_RESEND_INTERVAL = 8 * 1000;
     // 默认应用在前台时心跳消息间隔时长
-    public static final int DEFAULT_HEARTBEAT_INTERVAL_FOREGROUND = 3 * 1000;
+    public static final int DEFAULT_HEARTBEAT_INTERVAL_FOREGROUND = 20 * 1000;
     // 默认应用在后台时心跳消息间隔时长
     public static final int DEFAULT_HEARTBEAT_INTERVAL_BACKGROUND = 30 * 1000;
     // 应用在前台标识

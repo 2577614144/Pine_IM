@@ -1,6 +1,8 @@
 package com.lipine.im.sdk.netty;
 
+import com.lipine.im.sdk.netty.handler.HeartbeatRespHandler;
 import com.lipine.im.sdk.netty.handler.LoginAuthRespHandler;
+import com.lipine.im.sdk.netty.handler.TCPMessageHandler;
 import com.lipine.im.sdk.protobuf.MessageProtobuf;
 
 import io.netty.channel.Channel;
@@ -40,9 +42,9 @@ public class TCPChannelInitializerHandler extends ChannelInitializer<Channel> {
 
         // 握手认证消息响应处理handler
         pipeline.addLast(LoginAuthRespHandler.class.getSimpleName(), new LoginAuthRespHandler(imsClient));
-//        // 心跳消息响应处理handler
-//        pipeline.addLast(HeartbeatRespHandler.class.getSimpleName(), new HeartbeatRespHandler(imsClient));
+        // 心跳消息响应处理handler
+        pipeline.addLast(HeartbeatRespHandler.class.getSimpleName(), new HeartbeatRespHandler(imsClient));
 //        // 接收消息处理handler
-//        pipeline.addLast(TCPReadHandler.class.getSimpleName(), new TCPReadHandler(imsClient));
+        pipeline.addLast(TCPMessageHandler.class.getSimpleName(), new TCPMessageHandler(imsClient));
     }
 }

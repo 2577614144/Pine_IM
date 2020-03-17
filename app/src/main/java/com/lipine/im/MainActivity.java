@@ -10,9 +10,9 @@ import com.lipine.im.sdk.LPStatusDefine;
 import com.lipine.im.sdk.listener.OnLoginCallback;
 
 public class MainActivity extends BaseActivity {
-//    private String serverUrl = "10.23.6.31";
+    private String serverUrl = "10.23.6.31";
 //    private String serverUrl = "127.0.0.1";
-    private String serverUrl = "192.168.137.1";
+//    private String serverUrl = "192.168.137.1";
     private int port = 8855;
     private String domain = "itjavaweb.com";
     private String username = "111";
