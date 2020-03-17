@@ -1,5 +1,5 @@
 # Pine_IM
-基于Netty Protobuf实现的Android即时通讯
+基于Netty Protobuf实现的Android即时通讯 心跳机制
 
 ## Android Netty+Protobuf实现即时通讯SDK
 
@@ -18,7 +18,6 @@
 
 **待完成**
 
-- 心跳机制
 - 断线重连
 - 消息重发
 - 读写超时
