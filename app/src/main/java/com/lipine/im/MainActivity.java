@@ -8,15 +8,18 @@ import com.lipine.im.base.BaseActivity;
 import com.lipine.im.sdk.LPIMClient;
 import com.lipine.im.sdk.LPStatusDefine;
 import com.lipine.im.sdk.listener.OnLoginCallback;
+import com.lipine.im.sdk.protobuf.MessageProtobuf;
 
 public class MainActivity extends BaseActivity {
-    private String serverUrl = "10.23.6.31";
+
+    private static final String TAG = "MainActivity";
+//    private String serverUrl = "10.23.6.31";
 //    private String serverUrl = "127.0.0.1";
-//    private String serverUrl = "192.168.137.1";
-    private int port = 8855;
+    private String serverUrl = "192.168.137.1";
+    private int port = 8899;
     private String domain = "itjavaweb.com";
-    private String username = "111";
-    private String password = "222";
+    private String username = "lipine";
+    private String password = "123456";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +35,10 @@ public class MainActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onSuccess() {
+                    public void onSuccess(MessageProtobuf.LogResponseMsg logResponseMsg) {
                         ToastUtils.showShort("用户名密码正确，跳转首页");
                     }
+
 
                     @Override
                     public void onError(LPStatusDefine.LPConnectErrorCode lpConnectErrorCode) {

@@ -98,10 +98,10 @@ public class MessageProcessor {
      */
     public static MessageProtobuf.Msg.Builder getProtoBufMessageBuilderByAppMessage(AppMessage message) {
         MessageProtobuf.Msg.Builder builder = MessageProtobuf.Msg.newBuilder();
-        MessageProtobuf.Head.Builder headBuilder = MessageProtobuf.Head.newBuilder();
+        MessageProtobuf.CommonMsg.Builder headBuilder = MessageProtobuf.CommonMsg.newBuilder();
         headBuilder.setMsgType(message.getHead().getMsgType());
         headBuilder.setStatusReport(message.getHead().getStatusReport());
-        headBuilder.setMsgContentType(message.getHead().getMsgContentType());
+        headBuilder.setMsgContenType(message.getHead().getMsgContentType());
         if (!StringUtils.isEmpty(message.getHead().getMsgId()))
             headBuilder.setMsgId(message.getHead().getMsgId());
         if (!StringUtils.isEmpty(message.getHead().getFromId()))
@@ -112,9 +112,7 @@ public class MessageProcessor {
             headBuilder.setTimestamp(message.getHead().getTimestamp());
         if (!StringUtils.isEmpty(message.getHead().getExtend()))
             headBuilder.setExtend(message.getHead().getExtend());
-        if (!StringUtils.isEmpty(message.getBody()))
-            builder.setBody(message.getBody());
-        builder.setHead(headBuilder);
+        builder.setCommonMsg(headBuilder);
         return builder;
     }
 
@@ -128,17 +126,16 @@ public class MessageProcessor {
             MessageProtobuf.Msg protobufMessage) {
         AppMessage message = new AppMessage();
         Head head = new Head();
-        MessageProtobuf.Head protoHead = protobufMessage.getHead();
+        MessageProtobuf.CommonMsg protoHead = protobufMessage.getCommonMsg();
         head.setMsgType(protoHead.getMsgType());
         head.setStatusReport(protoHead.getStatusReport());
-        head.setMsgContentType(protoHead.getMsgContentType());
+        head.setMsgContentType(protoHead.getMsgContenType());
         head.setMsgId(protoHead.getMsgId());
         head.setFromId(protoHead.getFromId());
         head.setToId(protoHead.getToId());
         head.setTimestamp(protoHead.getTimestamp());
         head.setExtend(protoHead.getExtend());
         message.setHead(head);
-        message.setBody(protobufMessage.getBody());
         return message;
     }
 
@@ -147,22 +144,38 @@ public class MessageProcessor {
      *
      * @return
      */
-    public static MessageProtobuf.Msg getHandshakeAndLoginMsg(String userName,String passWord,String serverUrl,int port) {
-        MessageProtobuf.Msg.Builder builder = MessageProtobuf.Msg.newBuilder();
-        MessageProtobuf.Head.Builder headBuilder = MessageProtobuf.Head.newBuilder();
-        headBuilder.setMsgId(UUID.randomUUID().toString());
-        headBuilder.setMsgType(MessageType.HANDSHAKE.getMsgType());
-        headBuilder.setFromId(userName);
-        headBuilder.setTimestamp(System.currentTimeMillis());
+//    public static MessageProtobuf.Msg getHandshakeAndLoginMsg(String userName,String passWord,String serverUrl,int port) {
+//        MessageProtobuf.Msg.Builder builder = MessageProtobuf.Msg.newBuilder();
+//        MessageProtobuf.CommonMsg.Builder headBuilder = MessageProtobuf.CommonMsg.newBuilder();
+//        headBuilder.setMsgId(UUID.randomUUID().toString());
+//        headBuilder.setMsgType(MessageType.HANDSHAKE.getMsgType());
+//        headBuilder.setFromId(userName);
+//        headBuilder.setTimestamp(System.currentTimeMillis());
+//
+//        JSONObject jsonObj = new JSONObject();
+//        jsonObj.put("userName", userName);
+//        jsonObj.put("passWord", passWord);
+//        jsonObj.put("serverUrl",serverUrl);
+//        jsonObj.put("port",port);
+//        jsonObj.put("mac", DeviceUtils.getMacAddress());
+//        headBuilder.setExtend(jsonObj.toString());
+//        builder.setCommonMsg(headBuilder.build());
+//        return builder.build();
+//    }
 
-        JSONObject jsonObj = new JSONObject();
-        jsonObj.put("userName", userName);
-        jsonObj.put("passWord", passWord);
-        jsonObj.put("serverUrl",serverUrl);
-        jsonObj.put("port",port);
-        jsonObj.put("mac", DeviceUtils.getMacAddress());
-        headBuilder.setExtend(jsonObj.toString());
-        builder.setHead(headBuilder.build());
-        return builder.build();
+    /**
+     * 构建握手消息
+     *
+     * @return
+     */
+    public static MessageProtobuf.Msg getHandshakeAndLoginMsg(String userName,String passWord,String serverUrl,int port) {
+        MessageProtobuf.Msg msg = MessageProtobuf.Msg.newBuilder()
+                .setDataType(MessageProtobuf.Msg.DataType.LoginRequestMsgType)
+                .setLoginRequestMsg(MessageProtobuf.LoginRequestMsg.newBuilder()
+                        .setUsername(userName)
+                        .setPassword(passWord)
+                        .build())
+                .build();
+        return msg;
     }
 }

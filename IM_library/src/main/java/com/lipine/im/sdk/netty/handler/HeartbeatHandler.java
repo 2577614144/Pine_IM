@@ -4,7 +4,6 @@ import com.lipine.im.sdk.LPIMClient;
 import com.lipine.im.sdk.event.CEventCenter;
 import com.lipine.im.sdk.event.Events;
 import com.lipine.im.sdk.netty.NettyTcpClient;
-import com.lipine.im.sdk.protobuf.MessageProtobuf;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -43,12 +42,12 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
 //                        heartbeatTask = new HeartbeatTask(ctx);
 //                    }
 //                    imsClient.getLoopGroup().execWorkTask(heartbeatTask);
-                    MessageProtobuf.Msg heartbeatRespMsg = imsClient.getHeartbeatMsg();
-                    if (heartbeatRespMsg == null || ctx == null) {
-                        return;
-                    }
-                    LPIMClient.getInstance().channel = ctx.channel();
-                    CEventCenter.dispatchEvent(Events.CHAT_HEARTBEAT_SEND_MESSAGE, 0, 0, heartbeatRespMsg);
+//                    MessageProtobuf.Msg heartbeatRespMsg = imsClient.getHeartbeatMsg();
+//                    if (heartbeatRespMsg == null || ctx == null) {
+//                        return;
+//                    }
+//                    LPIMClient.getInstance().channel = ctx.channel();
+//                    CEventCenter.dispatchEvent(Events.CHAT_HEARTBEAT_SEND_MESSAGE, 0, 0, heartbeatRespMsg);
                     break;
                 }
             }

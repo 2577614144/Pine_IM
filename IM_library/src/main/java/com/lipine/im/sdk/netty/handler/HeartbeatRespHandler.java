@@ -1,6 +1,5 @@
 package com.lipine.im.sdk.netty.handler;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.lipine.im.sdk.event.CEventCenter;
 import com.lipine.im.sdk.event.Events;
 import com.lipine.im.sdk.netty.NettyTcpClient;
@@ -28,23 +27,23 @@ public class HeartbeatRespHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        MessageProtobuf.Msg heartbeatRespMsg = (MessageProtobuf.Msg) msg;
-        if (heartbeatRespMsg == null || heartbeatRespMsg.getHead() == null) {
-            return;
-        }
-
-        MessageProtobuf.Msg heartbeatMsg = imsClient.getHeartbeatMsg();
-        if (heartbeatMsg == null || heartbeatMsg.getHead() == null) {
-            return;
-        }
-
-        int heartbeatMsgType = heartbeatMsg.getHead().getMsgType();
-        if (heartbeatMsgType == heartbeatRespMsg.getHead().getMsgType()) {
-//            LogUtils.eTag(TAG,"收到服务端心跳响应消息，message=" + heartbeatRespMsg);
-            CEventCenter.dispatchEvent(Events.CHAT_HEARTBEAT_RECEIVED_MESSAGE, 0, 0, heartbeatRespMsg);
-        } else {
-            // 消息透传
-            ctx.fireChannelRead(msg);
-        }
+//        MessageProtobuf.Msg heartbeatRespMsg = (MessageProtobuf.Msg) msg;
+//        if (heartbeatRespMsg == null || heartbeatRespMsg.getHead() == null) {
+//            return;
+//        }
+//
+//        MessageProtobuf.Msg heartbeatMsg = imsClient.getHeartbeatMsg();
+//        if (heartbeatMsg == null || heartbeatMsg.getHead() == null) {
+//            return;
+//        }
+//
+//        int heartbeatMsgType = heartbeatMsg.getHead().getMsgType();
+//        if (heartbeatMsgType == heartbeatRespMsg.getHead().getMsgType()) {
+////            LogUtils.eTag(TAG,"收到服务端心跳响应消息，message=" + heartbeatRespMsg);
+//            CEventCenter.dispatchEvent(Events.CHAT_HEARTBEAT_RECEIVED_MESSAGE, 0, 0, heartbeatRespMsg);
+//        } else {
+//            // 消息透传
+//            ctx.fireChannelRead(msg);
+//        }
     }
 }

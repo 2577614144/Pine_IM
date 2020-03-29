@@ -43,6 +43,8 @@ public class IMMessageService  extends Service  implements I_CEventListener {
     };
 
     private HeartbeatTask heartbeatTask;
+    //通知栏显示的数字
+    public  static int mMessageNumber = 0;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -88,18 +90,16 @@ public class IMMessageService  extends Service  implements I_CEventListener {
      * @param object
      */
     private void handlerLoginResult(Object object) {
-        MessageProtobuf.Msg handshakeRespMsg = (MessageProtobuf.Msg) object;
-        JSONObject jsonObj = JSON.parseObject(handshakeRespMsg.getHead().getExtend());
-        int  status = jsonObj.getIntValue("status");
+        MessageProtobuf.LogResponseMsg logResponseMsg = (MessageProtobuf.LogResponseMsg) object;
+        int  status = logResponseMsg.getStatus();
         if(status == 1){
             //发送心跳
-            NettyTcpClient.getInstance().addHeartbeatHandler();
-
+//            NettyTcpClient.getInstance().addHeartbeatHandler();
             if (mOnLoginCallback != null) {
-                mOnLoginCallback.onSuccess();
+                mOnLoginCallback.onSuccess(logResponseMsg);
                 mOnLoginCallback = null;
             }
-        }else if(status == -1){
+        }else if(status == 0){
             if (mOnLoginCallback != null) {
                 mOnLoginCallback.onAccountIncorrect();
                 mOnLoginCallback = null;

@@ -3,17 +3,14 @@ package com.lipine.im.sdk.netty;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.lipine.im.sdk.LPIMClient;
-import com.lipine.im.sdk.LPIMConfig;
 import com.lipine.im.sdk.LPStatusDefine;
 import com.lipine.im.sdk.bean.MessageType;
 import com.lipine.im.sdk.listener.ConnectServerStatusListener;
 import com.lipine.im.sdk.netty.handler.HeartbeatHandler;
 import com.lipine.im.sdk.netty.handler.TCPMessageHandler;
-import com.lipine.im.sdk.processor.MessageProcessor;
 import com.lipine.im.sdk.protobuf.MessageProtobuf;
 
 import java.util.UUID;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
@@ -25,7 +22,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.internal.StringUtil;
 
 /**
  * Time:2020/3/11
@@ -237,12 +233,12 @@ public class NettyTcpClient {
     private String  userId = "111";
     public MessageProtobuf.Msg getHeartbeatMsg() {
         MessageProtobuf.Msg.Builder builder = MessageProtobuf.Msg.newBuilder();
-        MessageProtobuf.Head.Builder headBuilder = MessageProtobuf.Head.newBuilder();
+        MessageProtobuf.CommonMsg.Builder headBuilder = MessageProtobuf.CommonMsg.newBuilder();
         headBuilder.setMsgId(UUID.randomUUID().toString());
         headBuilder.setMsgType(MessageType.HEARTBEAT.getMsgType());
         headBuilder.setFromId(userId);
         headBuilder.setTimestamp(System.currentTimeMillis());
-        builder.setHead(headBuilder.build());
+        builder.setCommonMsg(headBuilder.build());
         return builder.build();
     }
 
@@ -262,7 +258,7 @@ public class NettyTcpClient {
      * @param isJoinTimeoutManager 是否加入发送超时管理器
      */
     public void sendMsg(MessageProtobuf.Msg msg, boolean isJoinTimeoutManager) {
-        if (msg == null || msg.getHead() == null) {
+        if (msg == null || msg.getCommonMsg() == null) {
             LogUtils.eTag(TAG,"发送消息失败，消息为空\tmessage=" + msg);
             return;
         }

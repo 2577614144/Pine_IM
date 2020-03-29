@@ -1,0 +1,99 @@
+syntax = "proto3";// 指定protobuf版本
+option java_package = "com.pine.im.protobuf";// 指定包名
+option java_outer_classname = "MessageProtobuf";// 指定生成的类名
+
+message Msg {
+    enum DataType{
+        LoginRequestMsgType = 0;
+        LoginResponseMsgType = 1;
+        CommonMsgType = 2;
+        EchoMesType = 3;
+        HeartBeatType = 4;
+        MsgAckType = 5;
+        AckRequestType = 6;
+        AckAckType = 7;
+        AckNotifyType = 8;
+    }
+    DataType data_type = 1;
+    oneof dataBody{
+        LoginRequestMsg    login_request_msg = 2;
+        LogResponseMsg     login_response_msg = 3;
+        CommonMsg   common_msg = 4;
+        HeartBeat   heartbeat_msg = 5;
+        MsgAck      msg_ack = 6;
+        AckRequest  ack_request = 7;
+        AckAck      ack_ack = 8;
+        AckNotify   ack_notify = 9;
+    }
+}
+//登录的消息
+message LoginRequestMsg{
+    string username = 1;//用户名
+    string password = 2;//密码
+    string device_id = 3;//设备ID
+}
+//登录响应消息
+message LogResponseMsg{
+    string user_id = 1;//用户id
+    string token = 2;//用户token
+    int32  status = 3;//1表示验证通过 0表示验证失败
+}
+//通用消息
+message CommonMsg {
+    string msg_id = 1;// 消息id
+    int32  msg_type = 2;// 消息类型
+    int32  msg_conten_type = 3;// 消息内容类型
+    string from_id = 4;// 消息发送者id
+    string to_id = 5;// 消息接收者id
+    int64  timestamp = 6;// 消息时间戳
+    int32  status_report = 7;// 状态报告
+    string extend = 8;// 扩展字段，以key/value形式存放的json
+    bytes  bytes_file = 9;//图片、文件、语音消息的二进制数据
+}
+
+//R：客户端主动发送给服务器的报文
+//A：服务器被动应答客户端的报文，一个A一定对应一个R
+//N：服务器主动发送给客户端的报文
+
+//============================上行消息开始=======================================================
+//client-A向im-server发送一个消息请求包，即msg:R
+//message MsgRequest{
+//    string msg_id = 1;//消息id
+//    string from_id = 2;//发送者id
+//    string to_id = 3;//接收者id
+//}
+//im-server在成功处理后，回复client-A一个消息响应包，即msg:A
+message MsgAck{
+    string msg_id = 1;//消息id
+    string from_id = 2;//发送者id
+}
+//client-B在线，则im-server主动向client-B发送一个消息通知包，即msg:N（当然，如果client-B不在线，则消息会存储离线）
+//message MsgNotify{
+//    string msg_id = 1;//消息id
+//    string from_id = 2;//发送者id
+//}
+//============================上行消息结束=======================================================
+
+//============================下行消息开始=======================================================
+//client-B向im-server发送一个ack请求包，即ack:R
+message AckRequest{
+    string msg_id = 1;//消息id
+    string from_id = 2;//发送者id
+    string to_id = 3;//接收者id
+}
+//im-server在成功处理后，回复client-B一个ack响应包，即ack:A
+message AckAck{
+    string msg_id = 1;//消息id
+    string from_id = 2;//发送者id
+}
+//im-server主动向client-A发送一个ack通知包，即ack:N
+message AckNotify{
+    string msg_id = 1;//消息id
+    string to_id = 2;//接收者id
+}
+//============================下行消息结束=======================================================
+
+//心跳消息(应该发送尽可能少的byte)
+message HeartBeat{
+    string from_id = 1;// 消息发送者id
+}
